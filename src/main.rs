@@ -14,10 +14,10 @@ const DEPENDENCIES: &[&str] = &[
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     run_stdio(OrgSpec {
-        organization: "ORESoftware",
-        repository: "ORESoftware/org-mcp-server-template.rs",
-        service_name: "org-mcp-server-template",
-        package_name: "org-mcp-server-template",
+        organization: "happy-wakey",
+        repository: "happy-wakey/happy-wakey-mcp-server.rs",
+        service_name: "happy-wakey-mcp-server",
+        package_name: "happy-wakey-mcp-server",
         dependencies: DEPENDENCIES,
         version: env!("CARGO_PKG_VERSION"),
     })

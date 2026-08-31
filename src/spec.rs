@@ -1,4 +1,4 @@
-//! Immutable Fanwaave identity and provider-operation contract.
+//! Immutable happy-wakey identity and provider-operation contract.
 
 use ore_mcp_org_server::OrgSpec;
 

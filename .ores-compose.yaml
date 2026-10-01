@@ -1,0 +1,11 @@
+schema_version: ores.compose.v1
+project: happy-wakey-mcp-server
+allow_lazy_start: false
+
+services:
+  happy-wakey-mcp-server:
+    name: happy-wakey-mcp-server
+    runtime: host
+    build:
+      - ["cargo", "build", "--bins"]
+    command: ["./target/debug/happy-wakey-mcp-server.rs"]

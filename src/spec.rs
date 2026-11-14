@@ -26,6 +26,15 @@ pub const PROVIDER_OPERATIONS: &[(&str, &[&str])] = &[
     ),
 ];
 
+/// Look up the explicitly permitted, read-only operations of one provider.
+#[must_use]
+pub fn allowed_provider_operations(provider: &str) -> Option<&'static [&'static str]> {
+    PROVIDER_OPERATIONS
+        .iter()
+        .find(|(name, _)| *name == provider)
+        .map(|(_, operations)| *operations)
+}
+
 /// Returns the exact organization, repository, service, and Zed dependency identity.
 #[must_use]
 pub fn org_spec() -> OrgSpec {
@@ -43,6 +52,20 @@ pub fn org_spec() -> OrgSpec {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn provider_lookup_is_exact_and_read_only() {
+        assert_eq!(
+            allowed_provider_operations("github"),
+            Some(&["read_organization", "read_latest_workflow_run"][..])
+        );
+        assert_eq!(allowed_provider_operations("GitHub"), None);
+        assert_eq!(allowed_provider_operations("../github"), None);
+        assert_eq!(allowed_provider_operations("unknown"), None);
+        let providers: std::collections::HashSet<&str> =
+            PROVIDER_OPERATIONS.iter().map(|(provider, _)| *provider).collect();
+        assert_eq!(providers.len(), PROVIDER_OPERATIONS.len());
+    }
 
     #[test]
     fn scope_and_provider_contract_are_exact() {

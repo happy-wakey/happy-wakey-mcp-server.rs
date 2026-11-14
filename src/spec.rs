@@ -26,10 +26,21 @@ pub const PROVIDER_OPERATIONS: &[(&str, &[&str])] = &[
     ),
 ];
 
+/// Resolve the exact read-only operation allowlist for one provider.
+/// Unknown or case-variant providers have no implicit capabilities.
+#[must_use]
+pub fn allowed_provider_operations(provider: &str) -> Option<&'static [&'static str]> {
+    PROVIDER_OPERATIONS
+        .iter()
+        .find(|(name, _)| *name == provider)
+        .map(|(_, operations)| *operations)
+}
+
 /// Returns the exact organization, repository, service, and Zed dependency identity.
 #[must_use]
 pub fn org_spec() -> OrgSpec {
     debug_assert_eq!(PROVIDER_OPERATIONS.len(), 8);
+    debug_assert!(allowed_provider_operations("github").is_some());
     OrgSpec {
         organization: "happy-wakey",
         repository: "happy-wakey/happy-wakey-mcp-server.rs",
@@ -58,4 +69,14 @@ mod tests {
                     .all(|operation| operation.starts_with("read_"))
         }));
     }
+    #[test]
+    fn provider_lookup_is_exact_and_never_escalates_unknown_names() {
+        for (provider, expected) in PROVIDER_OPERATIONS {
+            assert_eq!(allowed_provider_operations(provider), Some(*expected));
+        }
+        assert_eq!(allowed_provider_operations("GitHub"), None);
+        assert_eq!(allowed_provider_operations("github.read_organization"), None);
+        assert_eq!(allowed_provider_operations(""), None);
+    }
+
 }
